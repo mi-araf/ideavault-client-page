@@ -2,6 +2,16 @@
 const nextConfig = {
   /* config options here */
   reactCompiler: true,
+   images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'placeimg.com',
+        port: '',
+        pathname: '**',
+      },
+    ],
+  },
 };
 
 export default nextConfig;
