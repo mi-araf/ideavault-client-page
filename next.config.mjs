@@ -7,7 +7,7 @@ const nextConfig = {
       {
         // https://images.unsplash.com/photo-1523240795612-9a054b0db644
         protocol: 'https',
-        hostname: 'images.unsplash.com',
+        hostname: '**',
         port: '',
         pathname: '**',
       },
