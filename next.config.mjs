@@ -5,8 +5,9 @@ const nextConfig = {
    images: {
     remotePatterns: [
       {
+        // https://images.unsplash.com/photo-1523240795612-9a054b0db644
         protocol: 'https',
-        hostname: 'placeimg.com',
+        hostname: 'images.unsplash.com',
         port: '',
         pathname: '**',
       },
