@@ -62,6 +62,7 @@ const RegisterPage = () => {
         await authClient.signIn.social({
             provider: "google",
             callbackURL: "/",
+            errorCallbackURL: "/register",
         });
     };
 

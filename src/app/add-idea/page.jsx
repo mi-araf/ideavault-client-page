@@ -76,33 +76,8 @@ const AddIdeaPage = () => {
             return;
         }
 
-        if (!formData.shortDescription.trim()) {
-            toast.error("Short description is required.");
-            return;
-        }
-
-        if (!formData.detailedDescription.trim()) {
-            toast.error("Detailed description is required.");
-            return;
-        }
-
         if (!formData.imageURL.trim()) {
             toast.error("Image URL is required.");
-            return;
-        }
-
-        if (!formData.targetAudience.trim()) {
-            toast.error("Target audience is required.");
-            return;
-        }
-
-        if (!formData.problemStatement.trim()) {
-            toast.error("Problem statement is required.");
-            return;
-        }
-
-        if (!formData.proposedSolution.trim()) {
-            toast.error("Proposed solution is required.");
             return;
         }
 
@@ -118,7 +93,7 @@ const AddIdeaPage = () => {
                 ? Number(formData.estimatedBudget)
                 : null,
             creatorName: user?.name || "IdeaVault User",
-            creatorEmail: user?.email,
+            creatorEmail: user?.email || "",
             creatorImage: user?.image || "",
         };
 
@@ -140,6 +115,20 @@ const AddIdeaPage = () => {
             }
 
             toast.success("Idea added successfully!");
+
+            setFormData({
+                ideaTitle: "",
+                shortDescription: "",
+                detailedDescription: "",
+                category: "Tech",
+                tags: "",
+                imageURL: "",
+                estimatedBudget: "",
+                targetAudience: "",
+                problemStatement: "",
+                proposedSolution: "",
+            });
+
             router.push("/ideas");
         } catch (error) {
             toast.error(error.message || "Something went wrong.");
@@ -168,7 +157,7 @@ const AddIdeaPage = () => {
             <div className="relative mx-auto max-w-7xl">
                 <div className="mx-auto max-w-3xl text-center">
                     <div className="mx-auto mb-4 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.25em] text-primary sm:text-sm">
-                        <Sparkles size={16} />
+                        <Sparkles size={16} className="animate-pulse" />
                         Private Idea Submission
                     </div>
 
@@ -249,7 +238,6 @@ const AddIdeaPage = () => {
                                     onChange={handleChange}
                                     placeholder="Write a short summary..."
                                     className="textarea textarea-bordered min-h-24 w-full rounded-xl"
-                                    required
                                 />
                             </label>
 
@@ -263,12 +251,11 @@ const AddIdeaPage = () => {
                                     onChange={handleChange}
                                     placeholder="Explain your idea in detail..."
                                     className="textarea textarea-bordered min-h-36 w-full rounded-xl"
-                                    required
                                 />
                             </label>
 
                             <label className="form-control">
-                                <span className="label-text mb-2 font-bold">Category</span>
+                                <span className="label-text font-bold">Category</span>
                                 <select
                                     name="category"
                                     value={formData.category}
@@ -285,7 +272,7 @@ const AddIdeaPage = () => {
                             </label>
 
                             <label className="form-control">
-                                <span className="label-text mb-2 font-bold">Tags Optional</span>
+                                <span className="label-text mb-2 font-bold">Tags (Optional)</span>
                                 <input
                                     type="text"
                                     name="tags"
@@ -311,7 +298,7 @@ const AddIdeaPage = () => {
 
                             <label className="form-control">
                                 <span className="label-text mb-2 font-bold">
-                                    Estimated Budget Optional
+                                    Estimated Budget (Optional)
                                 </span>
                                 <input
                                     type="number"
@@ -333,7 +320,6 @@ const AddIdeaPage = () => {
                                     onChange={handleChange}
                                     placeholder="Students, founders, small businesses"
                                     className="input input-bordered w-full rounded-xl"
-                                    required
                                 />
                             </label>
 
@@ -347,7 +333,6 @@ const AddIdeaPage = () => {
                                     onChange={handleChange}
                                     placeholder="What problem does this idea solve?"
                                     className="textarea textarea-bordered min-h-28 w-full rounded-xl"
-                                    required
                                 />
                             </label>
 
@@ -361,7 +346,6 @@ const AddIdeaPage = () => {
                                     onChange={handleChange}
                                     placeholder="How will your idea solve the problem?"
                                     className="textarea textarea-bordered min-h-28 w-full rounded-xl"
-                                    required
                                 />
                             </label>
                         </div>
