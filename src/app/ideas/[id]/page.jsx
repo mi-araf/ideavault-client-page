@@ -54,6 +54,10 @@ const IdeaDetailsPage = () => {
     const [editingText, setEditingText] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    const [isBookmarked, setIsBookmarked] = useState(false);
+    const [bookmarkCount, setBookmarkCount] = useState(0);
+    const [isBookmarking, setIsBookmarking] = useState(false);
+
     useEffect(() => {
         if (!isPending && !session) {
             router.push(`/login?callbackURL=/ideas/${id}`);
@@ -73,6 +77,20 @@ const IdeaDetailsPage = () => {
 
                 setIdea(ideaData);
                 setComments(commentData);
+
+                setBookmarkCount(ideaData?.bookmarksCount || 0);
+
+                const bookmarkRes = await fetch(
+                    `${API_URL}/ideas/${id}/bookmark-status?email=${encodeURIComponent(user?.email)}`
+                );
+
+                const bookmarkData = await bookmarkRes.json();
+
+                if (bookmarkData.success) {
+                    setIsBookmarked(bookmarkData.bookmarked);
+                    setBookmarkCount(bookmarkData.bookmarksCount || 0);
+                }
+
             } catch (error) {
                 toast.error("Failed to load idea details.");
             } finally {
@@ -81,7 +99,7 @@ const IdeaDetailsPage = () => {
         };
 
         loadIdeaDetails();
-    }, [id, session]);
+    }, [id, session, user?.email]);
 
     useEffect(() => {
         if (idea?.ideaTitle) {
@@ -221,6 +239,44 @@ const IdeaDetailsPage = () => {
         }
     };
 
+    const handleToggleBookmark = async () => {
+        if (!user?.email) {
+            toast.error("Please login first.");
+            return;
+        }
+
+        try {
+            setIsBookmarking(true);
+
+            const res = await fetch(`${API_URL}/ideas/${id}/bookmark`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    userEmail: user.email,
+                    userName: user.name,
+                    userImage: user.image || "",
+                }),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok || !data.success) {
+                throw new Error(data.message || "Failed to update bookmark.");
+            }
+
+            setIsBookmarked(data.bookmarked);
+            setBookmarkCount(data.bookmarksCount || 0);
+
+            toast.success(data.bookmarked ? "Idea bookmarked." : "Bookmark removed.");
+        } catch (error) {
+            toast.error(error.message || "Failed to update bookmark.");
+        } finally {
+            setIsBookmarking(false);
+        }
+    };
+
     if (isPending || isLoading) {
         return (
             <section className="flex min-h-screen items-center justify-center bg-base-100">
@@ -272,16 +328,16 @@ const IdeaDetailsPage = () => {
                 </Link>
 
                 <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
-                
+
                     <article className="overflow-hidden rounded-[2rem] border border-base-300 bg-base-200/60 shadow-xl backdrop-blur">
                         <div className="relative h-64 overflow-hidden sm:h-80">
-                            <Image 
+                            <Image
                                 src={
                                     idea.imageURL ||
                                     "https://images.unsplash.com/photo-1559136555-9303baea8ebd"
                                 }
                                 alt={idea.userName || "User"}
-                                height={400} 
+                                height={400}
                                 width={400}
                                 className="h-full w-full object-cover"
                             />
@@ -304,8 +360,8 @@ const IdeaDetailsPage = () => {
                         </div>
 
                         <div className="p-5 sm:p-7 lg:p-8">
-                            <div className="grid gap-4 grid-cols-3 ">
-                                <div className="rounded-2xl bg-base-100/70 p-4 transition duration-300 hover:-translate-y-1 hover:shadow-lg">
+                            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                                <div className="rounded-2xl bg-mist-400/30 p-4 transition duration-300 hover:-translate-y-1 hover:shadow-lg">
                                     <Heart className="text-error" size={22} />
                                     <p className="mt-2 text-xl font-black text-base-content">
                                         {idea.likesCount || 0}
@@ -315,7 +371,7 @@ const IdeaDetailsPage = () => {
                                     </p>
                                 </div>
 
-                                <div className="rounded-2xl bg-base-100/70 p-4 transition duration-300 hover:-translate-y-1 hover:shadow-lg">
+                                <div className="rounded-2xl bg-mist-400/30 p-4 transition duration-300 hover:-translate-y-1 hover:shadow-lg">
                                     <MessageCircle className="text-primary" size={22} />
                                     <p className="mt-2 text-xl font-black text-base-content">
                                         {idea.commentsCount || comments.length || 0}
@@ -325,15 +381,24 @@ const IdeaDetailsPage = () => {
                                     </p>
                                 </div>
 
-                                <div className="rounded-2xl bg-base-100/70 p-4 transition duration-300 hover:-translate-y-1 hover:shadow-lg">
-                                    <Bookmark className="text-warning" size={22} />
+                                <button type="button" onClick={handleToggleBookmark}
+                                    disabled={isBookmarking}
+                                    className={`col-span-3 md:col-span-1 cursor-pointer rounded-2xl bg-mist-400/30 p-4 text-left transition duration-300 hover:-translate-y-1 hover:shadow-lg ${isBookmarked ? "border border-warning/40 bg-warning/10" : ""
+                                        }`}
+                                >
+                                    <Bookmark
+                                        className={isBookmarked ? "fill-warning text-warning" : "text-warning"}
+                                        size={22}
+                                    />
+
                                     <p className="mt-2 text-xl font-black text-base-content">
-                                        {idea.bookmarksCount || 0}
+                                        {bookmarkCount}
                                     </p>
+
                                     <p className="text-xs font-semibold text-base-content/60">
-                                        Bookmarks
+                                        {isBookmarked ? "Bookmarked" : "Add Bookmark"}
                                     </p>
-                                </div>
+                                </button>
                             </div>
 
                             <div className="mt-7 grid gap-5">

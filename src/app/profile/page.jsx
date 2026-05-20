@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import {
     ArrowRight,
     BadgeCheck,
+    BookmarkCheckIcon,
     Edit3,
     ImageIcon,
     Lightbulb,
@@ -32,6 +33,7 @@ const ProfilePage = () => {
 
     const [ideasCount, setIdeasCount] = useState(0);
     const [interactionsCount, setInteractionsCount] = useState(0);
+    const [bookmarksCount, setBookmarksCount] = useState(0);
     const [isStatsLoading, setIsStatsLoading] = useState(true);
     const [isUpdating, setIsUpdating] = useState(false);
     const [profileImageError, setProfileImageError] = useState(false);
@@ -63,9 +65,10 @@ const ProfilePage = () => {
             try {
                 setIsStatsLoading(true);
 
-                const [ideasRes, interactionsRes] = await Promise.all([
+                const [ideasRes, interactionsRes, bookmarksRes] = await Promise.all([
                     fetch(`${API_URL}/my-ideas?email=${encodeURIComponent(user.email)}`),
                     fetch(`${API_URL}/my-interactions?email=${encodeURIComponent(user.email)}`),
+                    fetch(`${API_URL}/my-bookmarks?email=${encodeURIComponent(user.email)}`),
                 ]);
 
                 const ideasData = ideasRes.ok ? await ideasRes.json() : [];
@@ -73,10 +76,13 @@ const ProfilePage = () => {
                     ? await interactionsRes.json()
                     : [];
 
+                const bookmarksData = bookmarksRes.ok ? await bookmarksRes.json() : [];
+
                 setIdeasCount(Array.isArray(ideasData) ? ideasData.length : 0);
                 setInteractionsCount(
                     Array.isArray(interactionsData) ? interactionsData.length : 0
                 );
+                setBookmarksCount(Array.isArray(bookmarksData) ? bookmarksData.length : 0);
             } catch (error) {
                 console.error(error);
                 toast.error("Failed to load profile summary.");
@@ -257,6 +263,37 @@ const ProfilePage = () => {
                                 </button>
                             </div>
                         </div>
+
+                        <Link
+                            href="/bookmarks"
+                            className="mt-5 block rounded-[2rem] border border-base-300 bg-base-100/80 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-warning/40 hover:shadow-lg"
+                        >
+                            <div className="flex items-center justify-between gap-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="grid h-12 w-12 place-items-center rounded-2xl bg-warning/15 text-warning">
+                                        <BookmarkCheckIcon size={22} />
+                                    </div>
+
+                                    <div>
+                                        <h3 className="font-black text-base-content">
+                                            Bookmarked Ideas
+                                        </h3>
+                                        <p className="text-sm text-base-content/60">
+                                            Ideas you saved for later
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="text-right">
+                                    <p className="text-3xl font-black text-warning">
+                                        {bookmarksCount}
+                                    </p>
+                                    <p className="text-xs font-bold uppercase tracking-[0.18em] text-base-content/40">
+                                        Saved
+                                    </p>
+                                </div>
+                            </div>
+                        </Link>
 
                     </aside>
 
