@@ -114,6 +114,7 @@ const Navbar = () => {
         await authClient.signOut({
             fetchOptions: {
                 onSuccess: () => {
+                    localStorage.removeItem("ideaVaultToken");
                     toast.success("Logged out successfully.");
                     router.push("/login");
                 },

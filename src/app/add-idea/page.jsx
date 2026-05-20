@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
+import { getAuthHeaders } from "@/lib/api";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
@@ -102,9 +103,7 @@ const AddIdeaPage = () => {
 
             const res = await fetch(`${API_URL}/ideas`, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: getAuthHeaders(),
                 body: JSON.stringify(newIdea),
             });
 

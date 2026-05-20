@@ -22,6 +22,7 @@ import {
 import { TbHomeStats } from "react-icons/tb";
 import { PiFinnTheHumanLight } from "react-icons/pi";
 import { authClient } from "@/lib/auth-client";
+import { getAuthOnlyHeaders } from "@/lib/api";
 import { toast } from "sonner";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -66,9 +67,15 @@ const ProfilePage = () => {
                 setIsStatsLoading(true);
 
                 const [ideasRes, interactionsRes, bookmarksRes] = await Promise.all([
-                    fetch(`${API_URL}/my-ideas?email=${encodeURIComponent(user.email)}`),
-                    fetch(`${API_URL}/my-interactions?email=${encodeURIComponent(user.email)}`),
-                    fetch(`${API_URL}/my-bookmarks?email=${encodeURIComponent(user.email)}`),
+                    fetch(`${API_URL}/my-ideas`, {
+                        headers: getAuthOnlyHeaders(),
+                    }),
+                    fetch(`${API_URL}/my-interactions`, {
+                        headers: getAuthOnlyHeaders(),
+                    }),
+                    fetch(`${API_URL}/my-bookmarks`, {
+                        headers: getAuthOnlyHeaders(),
+                    }),
                 ]);
 
                 const ideasData = ideasRes.ok ? await ideasRes.json() : [];
@@ -157,6 +164,7 @@ const ProfilePage = () => {
         await authClient.signOut({
             fetchOptions: {
                 onSuccess: () => {
+                    localStorage.removeItem("ideaVaultToken");
                     toast.success("Logged out successfully.");
                     router.push("/login");
                 },

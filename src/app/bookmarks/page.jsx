@@ -14,6 +14,7 @@ import {
     Target,
 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
+import { getAuthOnlyHeaders } from "@/lib/api";
 import { toast } from "sonner";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -49,9 +50,9 @@ const BookmarksPage = () => {
             try {
                 setIsLoading(true);
 
-                const res = await fetch(
-                    `${API_URL}/my-bookmarks?email=${encodeURIComponent(user.email)}`
-                );
+                const res = await fetch(`${API_URL}/my-bookmarks`, {
+                    headers: getAuthOnlyHeaders(),
+                });
 
                 if (!res.ok) {
                     throw new Error("Failed to load bookmarks.");

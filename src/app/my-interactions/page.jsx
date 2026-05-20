@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
+import { getAuthOnlyHeaders } from "@/lib/api";
 import Image from "next/image";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -47,9 +48,9 @@ const MyInteractionsPage = () => {
             try {
                 setIsLoading(true);
 
-                const res = await fetch(
-                    `${API_URL}/my-interactions?email=${encodeURIComponent(user.email)}`
-                );
+                const res = await fetch(`${API_URL}/my-interactions`, {
+                    headers: getAuthOnlyHeaders(),
+                });
 
                 if (!res.ok) {
                     throw new Error("Failed to load interactions.");

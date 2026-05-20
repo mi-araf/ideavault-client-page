@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { FaEnvelope, FaEye, FaEyeSlash, FaGoogle, FaLock } from "react-icons/fa";
+import { saveJwtToken } from "@/lib/save-jwt";
 
 const LoginPage = () => {
     const router = useRouter();
@@ -31,8 +32,9 @@ const LoginPage = () => {
                 onRequest: () => {
                     toast.loading("Logging in...");
                 },
-                onSuccess: () => {
+                onSuccess: async () => {
                     toast.dismiss();
+                    await saveJwtToken();
                     toast.success("Login successful!");
                     router.push(callbackURL);
                 },

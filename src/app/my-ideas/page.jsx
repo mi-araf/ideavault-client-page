@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
+import { getAuthHeaders, getAuthOnlyHeaders } from "@/lib/api";
 import Image from "next/image";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -66,9 +67,9 @@ const MyIdeasPage = () => {
 
         try {
             setIsLoading(true);
-            const res = await fetch(
-                `${API_URL}/my-ideas?email=${encodeURIComponent(user.email)}`
-            );
+            const res = await fetch(`${API_URL}/my-ideas`, {
+                headers: getAuthOnlyHeaders(),
+            });
             const data = await res.json();
             setIdeas(data);
         } catch (error) {
@@ -136,9 +137,7 @@ const MyIdeasPage = () => {
 
             const res = await fetch(`${API_URL}/ideas/${selectedIdea._id}`, {
                 method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: getAuthHeaders(),
                 body: JSON.stringify(updatedData),
             });
 
@@ -162,12 +161,8 @@ const MyIdeasPage = () => {
         try {
             const res = await fetch(`${API_URL}/ideas/${deleteIdea._id}`, {
                 method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    creatorEmail: user?.email,
-                }),
+                headers: getAuthHeaders(),
+                body: JSON.stringify({}),
             });
 
             const data = await res.json();
@@ -308,7 +303,7 @@ const MyIdeasPage = () => {
             {/* Update Modal */}
             <dialog id="update_idea_modal" className="modal">
                 <div className="modal-box w-11/12 max-w-5xl overflow-hidden rounded-[2rem] border border-base-300 bg-base-100 p-0 shadow-2xl">
-                
+
                     <div className="relative overflow-hidden border-b border-base-300 bg-base-200/80 px-5 py-5 sm:px-7">
                         <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-primary/20 blur-3xl" />
                         <div className="absolute -bottom-12 left-10 h-28 w-28 rounded-full bg-secondary/20 blur-3xl" />
@@ -334,10 +329,10 @@ const MyIdeasPage = () => {
                     </div>
 
                     <form onSubmit={handleUpdateIdea}>
-                        
+
                         <div className="max-h-[68vh] overflow-y-auto px-5 py-6 sm:px-7">
                             <div className="grid gap-6 lg:grid-cols-[0.72fr_1.28fr]">
-                                
+
                                 <aside className="rounded-[1.6rem] border border-base-300 bg-base-200/60 p-5 lg:sticky lg:top-0 lg:h-fit">
                                     <div className="overflow-hidden rounded-[1.25rem] border border-base-300 bg-base-100">
                                         <div className="relative h-40">

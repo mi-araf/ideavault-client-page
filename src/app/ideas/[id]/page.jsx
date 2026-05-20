@@ -23,6 +23,7 @@ import {
 import Link from "next/link";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
+import { getAuthHeaders, getAuthOnlyHeaders } from "@/lib/api";
 import Image from "next/image";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -80,9 +81,9 @@ const IdeaDetailsPage = () => {
 
                 setBookmarkCount(ideaData?.bookmarksCount || 0);
 
-                const bookmarkRes = await fetch(
-                    `${API_URL}/ideas/${id}/bookmark-status?email=${encodeURIComponent(user?.email)}`
-                );
+                const bookmarkRes = await fetch(`${API_URL}/ideas/${id}/bookmark-status`, {
+                    headers: getAuthOnlyHeaders(),
+                });
 
                 const bookmarkData = await bookmarkRes.json();
 
@@ -133,9 +134,7 @@ const IdeaDetailsPage = () => {
 
             const res = await fetch(`${API_URL}/ideas/${id}/comments`, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: getAuthHeaders(),
                 body: JSON.stringify(newComment),
             });
 
@@ -179,9 +178,7 @@ const IdeaDetailsPage = () => {
         try {
             const res = await fetch(`${API_URL}/comments/${commentId}`, {
                 method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: getAuthHeaders(),
                 body: JSON.stringify({
                     commentText: editingText,
                     userEmail: user?.email,
@@ -212,9 +209,7 @@ const IdeaDetailsPage = () => {
         try {
             const res = await fetch(`${API_URL}/comments/${commentId}`, {
                 method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: getAuthHeaders(),
                 body: JSON.stringify({
                     userEmail: user?.email,
                     ideaId: id,
@@ -250,14 +245,13 @@ const IdeaDetailsPage = () => {
 
             const res = await fetch(`${API_URL}/ideas/${id}/bookmark`, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    userEmail: user.email,
-                    userName: user.name,
-                    userImage: user.image || "",
-                }),
+                headers: getAuthHeaders(),
+                body: JSON.stringify({}),
+                // body: JSON.stringify({
+                //     userEmail: user.email,
+                //     userName: user.name,
+                //     userImage: user.image || "",
+                // }),
             });
 
             const data = await res.json();

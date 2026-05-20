@@ -50,7 +50,7 @@ export default function TrendingIdeas() {
                 <div className="mx-auto max-w-3xl text-center">
                     <div className="mx-auto mb-4 flex w-fit items-center gap-2 rounded-full border border-fuchsia-200 bg-white px-4 py-2 text-sm font-bold text-fuchsia-600 shadow-sm dark:border-fuchsia-500/20 dark:bg-white/5 dark:text-fuchsia-300">
                         <Flame size={16} className="animate-bounce" />
-                        Trending Startup Sparks
+                        Trending Startup Ideas
                     </div>
 
                     <h2 className="text-3xl font-black tracking-tight text-slate-950 dark:text-white sm:text-4xl lg:text-5xl">
