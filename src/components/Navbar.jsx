@@ -61,21 +61,29 @@ const Navbar = () => {
         return path;
     };
 
+    const buttonAnimation = "relative overflow-hidden rounded-xl transition-all duration-300 ease-out hover:-translate-y-0.5 active:translate-y-0 active:scale-95 before:absolute before:inset-0 before:-translate-x-full before:bg-white/15 before:transition-transform before:duration-500 hover:before:translate-x-0";
+
+    const primaryButtonClass = `${buttonAnimation} btn btn-primary btn-sm shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/35`;
+
+    const ghostButtonClass = `${buttonAnimation} btn btn-ghost btn-sm hover:bg-base-200 hover:shadow-md`;
+
+    const iconButtonClass = "btn btn-ghost btn-circle transition-all duration-300 ease-out hover:-translate-y-0.5 hover:rotate-6 hover:bg-primary/10 hover:text-primary hover:shadow-md active:scale-90";
+
     const getNavLinkClass = (path) => {
         const active = isActivePath(path);
 
-        return `relative rounded-xl px-4 py-2 text-sm font-bold transition-all duration-300 hover:-translate-y-0.5 ${active
-                ? "bg-primary text-primary-content shadow-lg shadow-primary/20"
-                : "text-base-content/80 hover:bg-base-200 hover:text-base-content"
+        return `group relative overflow-hidden rounded-xl px-4 py-2 text-sm font-bold transition-all duration-300 ease-out hover:-translate-y-0.5 active:scale-95 ${active
+            ? "bg-primary text-primary-content shadow-lg shadow-primary/25"
+            : "text-base-content/80 hover:bg-base-100 hover:text-primary hover:shadow-md"
             }`;
     };
 
     const getMobileNavLinkClass = (path) => {
         const active = isActivePath(path);
 
-        return `block rounded-xl px-4 py-3 text-sm font-bold transition-all duration-300 ${active
-                ? "bg-primary text-primary-content shadow-lg shadow-primary/20"
-                : "text-base-content/80 hover:bg-base-200 hover:text-base-content"
+        return `relative block overflow-hidden rounded-xl px-4 py-3 text-sm font-bold transition-all duration-300 ease-out hover:translate-x-1 active:scale-95 ${active
+                ? "bg-primary text-primary-content shadow-lg shadow-primary/25"
+                : "text-base-content/80 hover:bg-base-200 hover:text-primary"
             }`;
     };
 
@@ -102,7 +110,7 @@ const Navbar = () => {
                         <button
                             tabIndex={0}
                             type="button"
-                            className="btn btn-ghost btn-circle transition-all duration-300 hover:rotate-6 hover:bg-primary/10 hover:text-primary"
+                            className={iconButtonClass}
                             aria-label="Open menu"
                         >
                             <svg
@@ -139,14 +147,11 @@ const Navbar = () => {
 
                             {!isPending && !isLoggedIn && (
                                 <div className="grid gap-2">
-                                    <Link href="/login" className="btn btn-ghost btn-sm rounded-xl">
+                                    <Link href="/login" className={ghostButtonClass}>
                                         Login
                                     </Link>
 
-                                    <Link
-                                        href="/register"
-                                        className="btn btn-primary btn-sm rounded-xl shadow-lg shadow-primary/20 transition hover:-translate-y-0.5"
-                                    >
+                                    <Link href="/register" className={primaryButtonClass}>
                                         Register
                                     </Link>
                                 </div>
@@ -208,7 +213,7 @@ const Navbar = () => {
                     <button
                         type="button"
                         onClick={toggleTheme}
-                        className="btn btn-ghost btn-circle transition-all duration-300 hover:-translate-y-0.5 hover:rotate-6 hover:bg-primary/10 hover:text-primary"
+                        className={iconButtonClass}
                         aria-label="Toggle light and dark mode"
                         title="Toggle light/dark mode"
                     >
@@ -218,17 +223,11 @@ const Navbar = () => {
                     {/* Logged Out Buttons */}
                     {!isPending && !isLoggedIn && (
                         <div className="hidden items-center gap-2 sm:flex">
-                            <Link
-                                href="/login"
-                                className="btn btn-ghost btn-sm rounded-xl transition-all duration-300 hover:-translate-y-0.5 hover:bg-base-200"
-                            >
+                            <Link href="/login" className={ghostButtonClass}>
                                 Login
                             </Link>
 
-                            <Link
-                                href="/register"
-                                className="btn btn-primary btn-sm rounded-xl shadow-lg shadow-primary/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/30"
-                            >
+                            <Link href="/register" className={primaryButtonClass}>
                                 Register
                             </Link>
                         </div>
@@ -286,7 +285,7 @@ const Navbar = () => {
                                 </li>
 
                                 <li className="mt-2">
-                                    <button type="button" onClick={handleLogout} className="text-error">
+                                    <button type="button" onClick={handleLogout} className={`${buttonAnimation} btn btn-error btn-sm text-error-content shadow-lg shadow-error/20 hover:shadow-xl`} >
                                         Logout
                                     </button>
                                 </li>
