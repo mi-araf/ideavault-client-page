@@ -16,7 +16,7 @@ import { authClient } from "@/lib/auth-client";
 import { getAuthHeaders, getAuthOnlyHeaders } from "@/lib/api";
 import Image from "next/image";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const categories = [
     "Tech",

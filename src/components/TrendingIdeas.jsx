@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 function getShortText(text, maxLength = 92) {
     if (!text) return "A fresh startup concept waiting for community validation.";

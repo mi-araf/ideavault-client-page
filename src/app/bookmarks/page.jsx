@@ -17,7 +17,7 @@ import { authClient } from "@/lib/auth-client";
 import { getAuthOnlyHeaders } from "@/lib/api";
 import { toast } from "sonner";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const formatDate = (date) => {
     if (!date) return "Recently";
