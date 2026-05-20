@@ -19,6 +19,7 @@ import {
     X,
 } from "lucide-react";
 import { TbHomeStats } from "react-icons/tb";
+import { PiFinnTheHumanLight } from "react-icons/pi";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 
@@ -33,6 +34,7 @@ const ProfilePage = () => {
     const [interactionsCount, setInteractionsCount] = useState(0);
     const [isStatsLoading, setIsStatsLoading] = useState(true);
     const [isUpdating, setIsUpdating] = useState(false);
+    const [profileImageError, setProfileImageError] = useState(false);
 
     const [formData, setFormData] = useState({
         name: "",
@@ -159,6 +161,20 @@ const ProfilePage = () => {
         });
     };
 
+    const getInitials = (name, email) => {
+        const source = (name || email || "User").trim();
+        const words = source.split(" ").filter(Boolean);
+
+        if (words.length >= 2) {
+            return `${words[0][0]}${words[1][0]}`.toUpperCase();
+        }
+
+        return source.slice(0, 2).toUpperCase();
+    };
+    useEffect(() => {
+        setProfileImageError(false);
+    }, [user?.image]);
+
     if (isPending || isStatsLoading) {
         return <ProfileSkeleton />;
     }
@@ -177,8 +193,8 @@ const ProfilePage = () => {
                         Hello, {user?.name || "IdeaVault User"}
                     </p>
 
-                    <h1 className="mt-1 text-5xl font-black tracking-tight text-base-content sm:text-6xl">
-                        Profile
+                    <h1 className="mt-1 text-5xl font-black tracking-tight text-base-content sm:text-6xl inline-flex">
+                        <PiFinnTheHumanLight className="mt-0.5" />  &nbsp;Profile
                     </h1>
                 </div>
 
@@ -186,25 +202,24 @@ const ProfilePage = () => {
                     {/* Left Profile Card */}
                     <aside className="profile-slide-right profile-delay-1 rounded-[2.3rem] border border-base-300 bg-base-200/60 p-6 shadow-2xl backdrop-blur sm:p-8">
                         <div className="rounded-[2rem] border border-base-300 bg-base-100/80 p-6 text-center shadow-sm sm:p-8">
-                            <div className="mx-auto inline-flex rounded-full bg-success/15 px-5 py-2 text-sm font-black text-success">
+                            <div className="mx-auto inline-flex rounded-full bg-success/15 px-5 py-2 text-sm font-semibold text-success">
                                 Active Member
                             </div>
 
-                            <div className="relative mx-auto mt-8 h-36 w-36 rounded-full bg-primary/10 p-2 shadow-xl shadow-primary/10 transition duration-300 hover:scale-105 sm:h-40 sm:w-40">
-                                <div className="h-full w-full overflow-hidden rounded-full border-4 border-base-100 bg-primary text-primary-content">
-                                    {user?.image ? (
+                            <div className="relative mx-auto mt-8 h- w-50 rounded-full bg-primary/10 p-2 shadow-xl shadow-primary/10 transition duration-300 hover:scale-105 sm:h-40 sm:w-40">
+                                <div className="h-full w-full overflow-hidden rounded-full border-4 border-base-100 text-gray-800">
+                                    {user?.image && !profileImageError ? (
                                         <Image
                                             src={user.image}
                                             alt={user?.name || "Profile"}
-                                            width={180}
-                                            height={180}
+                                            width={220}
+                                            height={220}
+                                            onError={() => setProfileImageError(true)}
                                             className="h-full w-full object-cover"
                                         />
                                     ) : (
-                                        <div className="grid h-full w-full place-items-center text-5xl font-black">
-                                            {user?.name?.charAt(0)?.toUpperCase() ||
-                                                user?.email?.charAt(0)?.toUpperCase() ||
-                                                "U"}
+                                        <div className="grid h-full w-full place-items-center rounded-full bg-base-300 text-5xl font-medium tracking-tight text-base-content/80">
+                                            {getInitials(user?.name, user?.email)}
                                         </div>
                                     )}
                                 </div>
@@ -290,7 +305,7 @@ const ProfilePage = () => {
 
                                 <SummaryBox
                                     icon={TbHomeStats}
-                                    value="Live"
+                                    value="Active"
                                     label="Status"
                                     href=""
                                 />
@@ -345,18 +360,19 @@ const ProfilePage = () => {
 
                     <form onSubmit={handleUpdateProfile} className="p-6">
                         <div className="mb-6 flex items-center gap-4 rounded-2xl border border-base-300 bg-base-200/60 p-4">
-                            <div className="h-16 w-16 shrink-0 overflow-hidden rounded-full bg-primary text-primary-content">
-                                {formData.image ? (
+                            <div className="h-16 w-16 shrink-0 overflow-hidden rounded-full ">
+                                {formData?.image && !profileImageError ? (
                                     <Image
                                         src={formData.image}
-                                        alt="Preview"
-                                        width={80}
-                                        height={80}
+                                        alt={formData?.name || "Profile"}
+                                        width={220}
+                                        height={220}
+                                        onError={() => setProfileImageError(true)}
                                         className="h-full w-full object-cover"
                                     />
                                 ) : (
-                                    <div className="grid h-full w-full place-items-center text-xl font-black">
-                                        {formData.name?.charAt(0)?.toUpperCase() || "U"}
+                                    <div className="grid h-full w-full place-items-center rounded-full bg-base-300 text-2xl tracking-tight text-base-content/80">
+                                        {getInitials(formData?.name, formData?.email)}
                                     </div>
                                 )}
                             </div>
@@ -365,9 +381,6 @@ const ProfilePage = () => {
                                 <h4 className="font-black text-base-content">
                                     {formData.name || "Your Name"}
                                 </h4>
-                                <p className="text-sm text-base-content/60">
-                                    Live preview
-                                </p>
                             </div>
                         </div>
 

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
-import { FaGoogle } from "react-icons/fa";
+import { FaEnvelope, FaEye, FaEyeSlash, FaGoogle, FaLock } from "react-icons/fa";
 
 const LoginPage = () => {
     const router = useRouter();
@@ -15,13 +15,14 @@ const LoginPage = () => {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
 
     async function handleLogin(e) {
         e.preventDefault();
 
         await authClient.signIn.email(
             {
-                email,
+                email: email.trim(),
                 password,
                 callbackURL,
                 rememberMe: true,
@@ -63,45 +64,75 @@ const LoginPage = () => {
                 </p>
 
                 <form onSubmit={handleLogin} className="mt-8 space-y-4">
-                    <input
-                        type="email"
-                        placeholder="Email"
-                        className="input input-bordered w-full"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                    />
+                    {/* Email */}
+                    <label className="input input-bordered flex w-full items-center gap-3 rounded-xl">
+                        <FaEnvelope className="text-base-content/40" />
+                        <input
+                            id="email"
+                            name="email"
+                            type="email"
+                            placeholder="Email"
+                            className="grow"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            autoComplete="email"
+                            required
+                        />
+                    </label>
 
-                    <input
-                        type="password"
-                        placeholder="Password"
-                        className="input input-bordered w-full"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
+                    {/* Password */}
+                    <label className="input input-bordered flex w-full items-center gap-3 rounded-xl">
+                        <FaLock className="text-base-content/40" />
+                        <input
+                            id="password"
+                            name="password"
+                            type={showPassword ? "text" : "password"}
+                            placeholder="Password"
+                            className="grow"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            autoComplete="current-password"
+                            required
+                        />
+
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword((current) => !current)}
+                            className="text-base-content/50 transition hover:text-primary"
+                            aria-label={showPassword ? "Hide password" : "Show password"}
+                        >
+                            {showPassword ? <FaEyeSlash /> : <FaEye />}
+                        </button>
+                    </label>
 
                     <div className="text-right">
-                        <button type="button" className="text-sm font-semibold text-primary cursor-pointer" >
+                        <button
+                            type="button"
+                            className="cursor-pointer text-sm font-semibold text-primary transition hover:text-primary/80 hover:underline"
+                        >
                             Forgot password?
                         </button>
                     </div>
 
-                    <button type="submit" className="btn btn-primary w-full rounded-xl  " >
+                    <button
+                        type="submit"
+                        className="btn btn-primary w-full rounded-xl shadow-lg shadow-primary/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/30 active:scale-[0.98]"
+                    >
                         Login
                     </button>
                 </form>
 
                 <button
+                    type="button"
                     onClick={handleGoogleLogin}
-                    className="btn btn-outline mt-4 w-full rounded-xl"
+                    className="btn btn-outline mt-4 w-full rounded-xl transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.98]"
                 >
                     Continue with Google <FaGoogle className="ml-1 mt-0.5" />
                 </button>
 
                 <p className="mt-5 text-center text-sm text-base-content/70">
                     New to IdeaVault?{" "}
-                    <Link href="/register" className="font-bold text-primary">
+                    <Link href="/register" className="font-bold text-primary hover:underline">
                         Register
                     </Link>
                 </p>

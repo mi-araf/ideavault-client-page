@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Lightbulb, Moon, Sun } from "lucide-react";
+import { ChevronDown, Lightbulb, Moon, Sun } from "lucide-react";
+import { CgProfile } from "react-icons/cg";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import Image from "next/image";
@@ -16,6 +17,24 @@ const Navbar = () => {
     const user = session?.user;
     const isLoggedIn = Boolean(user);
 
+    const [avatarError, setAvatarError] = useState(false);
+
+    const firstName = user?.name?.trim()?.split(" ")?.[0] || "User";
+
+    const userInitials =
+        user?.name
+            ?.trim()
+            ?.replace(/\s+/g, "")
+            ?.slice(0, 2)
+            ?.toUpperCase() ||
+        user?.email
+            ?.trim()
+            ?.slice(0, 2)
+            ?.toUpperCase() ||
+        "U";
+
+    const hasValidAvatar = Boolean(user?.image) && !avatarError;
+
     const [theme, setTheme] = useState("light");
 
     useEffect(() => {
@@ -23,6 +42,10 @@ const Navbar = () => {
         setTheme(savedTheme);
         document.documentElement.setAttribute("data-theme", savedTheme);
     }, []);
+
+    useEffect(() => {
+        setAvatarError(false);
+    }, [user?.image]);
 
     useEffect(() => {
         document.documentElement.setAttribute("data-theme", theme);
@@ -82,8 +105,8 @@ const Navbar = () => {
         const active = isActivePath(path);
 
         return `relative block overflow-hidden rounded-xl px-4 py-3 text-sm font-bold transition-all duration-300 ease-out hover:translate-x-1 active:scale-95 ${active
-                ? "bg-primary text-primary-content shadow-lg shadow-primary/25"
-                : "text-base-content/80 hover:bg-base-200 hover:text-primary"
+            ? "bg-primary text-primary-content shadow-lg shadow-primary/25"
+            : "text-base-content/80 hover:bg-base-200 hover:text-primary"
             }`;
     };
 
@@ -160,7 +183,7 @@ const Navbar = () => {
                             {!isPending && isLoggedIn && (
                                 <div className="grid gap-2">
                                     <Link href="/profile" className="btn btn-ghost btn-sm rounded-xl">
-                                        My Profile
+                                        <CgProfile size={14} /> My Profile
                                     </Link>
 
                                     <button
@@ -235,28 +258,35 @@ const Navbar = () => {
 
                     {/* Logged In User Dropdown */}
                     {!isPending && isLoggedIn && (
-                        <div className="dropdown dropdown-end">
+                        <div className="dropdown dropdown-end cursor-pointer">
                             <button
                                 tabIndex={0}
                                 type="button"
-                                className="btn btn-ghost btn-circle avatar transition hover:-translate-y-0.5"
+                                className="flex items-center gap-2 rounded-full px-2 py-1.5 transition-all duration-300 hover:bg-base-200 hover:shadow-md active:scale-95"
                                 aria-label="Open profile menu"
                             >
-                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-content ring ring-primary ring-offset-2 ring-offset-base-100">
-                                    {user?.image ? (
+                                <div className="grid h-10 w-10 place-items-center overflow-hidden rounded-full bg-base-300 text-sm font-semibold uppercase text-base-content">
+                                    {hasValidAvatar ? (
                                         <Image
                                             src={user.image}
                                             alt={user?.name || "User"}
-                                            width={20}
-                                            height={20}
-                                            className="h-full w-full rounded-full object-cover"
+                                            height={15} width={15}
+                                            className="h-full w-full object-cover"
+                                            onError={() => setAvatarError(true)}
                                         />
                                     ) : (
-                                        user?.name?.charAt(0)?.toUpperCase() ||
-                                        user?.email?.charAt(0)?.toUpperCase() ||
-                                        "U"
+                                        userInitials
                                     )}
                                 </div>
+
+                                <span className="hidden max-w-24 truncate text-sm font-bold text-base-content sm:block">
+                                    {firstName}
+                                </span>
+
+                                <ChevronDown
+                                    size={16}
+                                    className="hidden text-base-content/70 transition-transform duration-300 sm:block"
+                                />
                             </button>
 
                             <ul
@@ -264,28 +294,44 @@ const Navbar = () => {
                                 className="menu dropdown-content mt-3 w-64 rounded-2xl border border-base-300 bg-base-100 p-3 shadow-xl"
                             >
                                 <li className="mb-2 px-3 py-2">
-                                    <p className="font-semibold leading-tight">
-                                        {user?.name || "IdeaVault User"}
-                                    </p>
-                                    <p className="text-xs text-base-content/60">
-                                        {user?.email || "user@example.com"}
-                                    </p>
+                                    <div className="flex items-center gap-3">
+                                        <div className="grid h-11 w-11 place-items-center overflow-hidden rounded-full bg-base-300 text-sm font-semibold uppercase text-base-content">
+                                            {hasValidAvatar ? (
+                                                <Image
+                                                    src={user.image}
+                                                    alt={user?.name || "User"}
+                                                    height={15} width={15}
+                                                    className="h-full w-full object-cover"
+                                                    onError={() => setAvatarError(true)}
+                                                />
+                                            ) : (
+                                                userInitials
+                                            )}
+                                        </div>
+
+                                        <div className="min-w-0">
+                                            <p className="truncate font-semibold leading-tight">
+                                                {user?.name || "IdeaVault User"}
+                                            </p>
+                                            <p className="truncate text-xs text-base-content/60">
+                                                {user?.email || "user@example.com"}
+                                            </p>
+                                        </div>
+                                    </div>
                                 </li>
 
                                 <li>
-                                    <Link href="/profile">My Profile</Link>
-                                </li>
-
-                                <li>
-                                    <Link href="/my-ideas">My Ideas</Link>
-                                </li>
-
-                                <li>
-                                    <Link href="/my-interactions">My Interactions</Link>
+                                    <Link href="/profile">
+                                        <CgProfile size={16} /> My Profile
+                                    </Link>
                                 </li>
 
                                 <li className="mt-2">
-                                    <button type="button" onClick={handleLogout} className={`${buttonAnimation} btn btn-error btn-sm text-error-content shadow-lg shadow-error/20 hover:shadow-xl`} >
+                                    <button
+                                        type="button"
+                                        onClick={handleLogout}
+                                        className={`${buttonAnimation} btn btn-error btn-sm text-error-content shadow-lg shadow-error/20 hover:shadow-xl`}
+                                    >
                                         Logout
                                     </button>
                                 </li>
