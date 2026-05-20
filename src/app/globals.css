@@ -2,6 +2,10 @@
 @plugin "daisyui";
 @import "@heroui/styles";
 
+html {
+    scroll-behavior: smooth;
+}
+
 @keyframes bannerFadeUp {
     from {
         opacity: 0;
@@ -34,6 +38,30 @@
     animation: bannerZoomFade 0.7s ease-out;
 }
 
+
+@keyframes profileShimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.profile-skeleton {
+    position: relative;
+    overflow: hidden;
+}
+
+.profile-skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.35),
+            transparent);
+    animation: profileShimmer 1.4s infinite;
+}
+/* 
 @keyframes profileSlideUp {
     from {
         opacity: 0;
@@ -70,12 +98,6 @@
     }
 }
 
-@keyframes profileShimmer {
-    100% {
-        transform: translateX(100%);
-    }
-}
-
 .profile-slide-up {
     animation: profileSlideUp 0.65s ease both;
 }
@@ -96,23 +118,6 @@
     animation-delay: 0.16s;
 }
 
-.profile-skeleton {
-    position: relative;
-    overflow: hidden;
-}
-
-.profile-skeleton::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    transform: translateX(-100%);
-    background: linear-gradient(90deg,
-            transparent,
-            rgba(255, 255, 255, 0.35),
-            transparent);
-    animation: profileShimmer 1.4s infinite;
-}
-
 @keyframes bookmarkSlideUp {
     from {
         opacity: 0;
@@ -127,4 +132,4 @@
 
 .bookmark-slide-up {
     animation: bookmarkSlideUp 0.6s ease both;
-}
+}  */

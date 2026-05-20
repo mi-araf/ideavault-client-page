@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { saveJwtToken } from "@/lib/save-jwt";
 import { toast } from "sonner";
+import { FaEnvelope, FaEye, FaEyeSlash, FaGoogle, FaLock } from "react-icons/fa";
 
 const LoginForm = () => {
     const router = useRouter();
@@ -15,13 +16,14 @@ const LoginForm = () => {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
 
-    const handleLogin = async (e) => {
+    async function handleLogin(e) {
         e.preventDefault();
 
         await authClient.signIn.email(
             {
-                email,
+                email: email.trim(),
                 password,
                 callbackURL,
                 rememberMe: true,
@@ -42,7 +44,7 @@ const LoginForm = () => {
                 },
             }
         );
-    };
+    }
 
     const handleGoogleLogin = async () => {
         await authClient.signIn.social({
@@ -64,58 +66,71 @@ const LoginForm = () => {
                 </p>
 
                 <form onSubmit={handleLogin} className="mt-8 space-y-4">
-                    <input
-                        type="email"
-                        placeholder="Email"
-                        className="input input-bordered w-full"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                    />
+                    {/* Email */}
+                    <label className="input input-bordered flex w-full items-center gap-3 rounded-xl">
+                        <FaEnvelope className="text-base-content/40" />
+                        <input
+                            id="email"
+                            name="email"
+                            type="email"
+                            placeholder="Email"
+                            className="grow"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            autoComplete="email"
+                            required
+                        />
+                    </label>
 
-                    <input
-                        type="password"
-                        placeholder="Password"
-                        className="input input-bordered w-full"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
+                    {/* Password */}
+                    <label className="input input-bordered flex w-full items-center gap-3 rounded-xl">
+                        <FaLock className="text-base-content/40" />
+                        <input
+                            id="password"
+                            name="password"
+                            type={showPassword ? "text" : "password"}
+                            placeholder="Password"
+                            className="grow"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            autoComplete="current-password"
+                            required
+                        />
+
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword((current) => !current)}
+                            className="text-base-content/50 transition hover:text-primary"
+                            aria-label={showPassword ? "Hide password" : "Show password"}
+                        >
+                            {showPassword ? <FaEyeSlash /> : <FaEye />}
+                        </button>
+                    </label>
 
                     <div className="text-right">
                         <button
                             type="button"
-                            className="text-sm font-semibold text-primary"
+                            className="cursor-pointer text-sm font-semibold text-primary transition hover:text-primary/80 hover:underline"
                         >
                             Forgot password?
                         </button>
                     </div>
 
-                    <button type="submit" className="btn btn-primary w-full rounded-xl">
+                    <button
+                        type="submit"
+                        className="btn btn-primary w-full rounded-xl shadow-lg shadow-primary/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/30 active:scale-[0.98]"
+                    >
                         Login
                     </button>
                 </form>
 
-                <div className="mt-5">
-                    <div className="flex items-center gap-3">
-                        <div className="h-px flex-1 bg-base-300" />
-                        <span className="text-xs font-bold uppercase tracking-[0.2em] text-base-content/40">
-                            Or
-                        </span>
-                        <div className="h-px flex-1 bg-base-300" />
-                    </div>
-
-                    <button
-                        type="button"
-                        onClick={handleGoogleLogin}
-                        className="btn mt-4 w-full rounded-xl border-base-300 bg-base-100 text-base-content shadow-sm transition-all duration-300 hover:-translate-y-1 hover:bg-base-200 hover:shadow-lg"
-                    >
-                        <span className="grid h-6 w-6 place-items-center rounded-full bg-white text-sm font-black text-blue-600">
-                            G
-                        </span>
-                        Continue with Google
-                    </button>
-                </div>
+                <button
+                    type="button"
+                    onClick={handleGoogleLogin}
+                    className="btn btn-outline mt-4 w-full rounded-xl transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.98]"
+                >
+                    Continue with Google <FaGoogle className="ml-1 mt-0.5" />
+                </button>
 
                 <p className="mt-5 text-center text-sm text-base-content/70">
                     New to IdeaVault?{" "}
