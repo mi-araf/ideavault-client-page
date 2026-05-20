@@ -3,6 +3,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import JwtSaver from "@/components/auth/JwtSaver";
+import RouteTitle from "@/components/RouteTitle";
 import { Toaster } from "sonner";
 
 const geistSans = Geist({
@@ -25,6 +26,7 @@ export default function RootLayout({ children }) {
         <html data-theme="light" lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`} >
             <body className="min-h-full flex flex-col">
                 <JwtSaver />
+                <RouteTitle />
                 <Navbar />
                 {children}
 
