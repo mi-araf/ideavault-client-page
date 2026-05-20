@@ -160,7 +160,7 @@ const Navbar = () => {
                             {!isPending && isLoggedIn && (
                                 <div className="grid gap-2">
                                     <Link href="/profile" className="btn btn-ghost btn-sm rounded-xl">
-                                        Profile Management
+                                        My Profile
                                     </Link>
 
                                     <button
@@ -273,7 +273,7 @@ const Navbar = () => {
                                 </li>
 
                                 <li>
-                                    <Link href="/profile">Profile Management</Link>
+                                    <Link href="/profile">My Profile</Link>
                                 </li>
 
                                 <li>
